@@ -18,6 +18,7 @@ public class p797_AnunciosDeMoviles {
             int numCambios = 0;
             int numApagados = 0;
             int numEncendidos = 0;
+            int numReiniciosAEncendidos = 0;
 
             //Leer las imágenes iniciales y deseadas
             for (int i = 0; i < numFilas; i++) {
@@ -29,6 +30,11 @@ public class p797_AnunciosDeMoviles {
                     if (inicial.charAt(j) == 'R') {
                         //Se reinicia el móvil al estado que se precise
                         numCambios++;
+                        if (imagen.charAt(j) == '0') {
+                            //Si se reinicia a apagado, me lo apunto por si puede intercambiarse por un apagado que necesite encenderse
+                            numReiniciosAEncendidos++;
+                        }
+
                     }
                     else if (inicial.charAt(j) != imagen.charAt(j)) {
                         //No son iguales, me guardo el estado inicial de los móviles
@@ -54,7 +60,13 @@ public class p797_AnunciosDeMoviles {
 
             //Si sobran apagados, éstos no podrán encenderse, por lo tanto es imposible
             if (numApagados > 0) {
-                System.out.println("IMPOSIBLE");
+                if (numApagados > numReiniciosAEncendidos) {
+                    System.out.println("IMPOSIBLE");
+                }
+                else {
+                    //Si hay apagados, pero se pueden encender con los reinicios, sumamos los reinicios
+                    System.out.println((numCambios + numApagados));
+                }
             }
             else {
                 System.out.println((numCambios + numEncendidos));
@@ -63,3 +75,4 @@ public class p797_AnunciosDeMoviles {
         }
     }
 }
+
