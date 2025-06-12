@@ -56,13 +56,13 @@ public class p266_CopistasDaltonicos {
 
                 if (transformacionesInversas.containsKey(original)) {
                     //Buscar la clave que mapea al original y cambiarla
-                    char origen = transformacionesInversas.get(original);
-                    transformaciones.put(origen, cambio); //Actualizar la clave
-                    transformacionesInversas.put(cambio, origen);
+                    //char origen = transformacionesInversas.get(original);
+                    //transformaciones.put(origen, cambio); //Actualizar la clave
+                    //transformacionesInversas.put(cambio, origen);
                 }
 
                 transformaciones.put(original, cambio);
-                transformacionesInversas.put(cambio, original);
+                //transformacionesInversas.put(cambio, original);
 
 
             }
