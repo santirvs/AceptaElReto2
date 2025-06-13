@@ -64,7 +64,7 @@ public class p797_AnunciosDeMoviles {
                     System.out.println("IMPOSIBLE");
                 }
                 else {
-                    //Si hay apagados, pero se pueden encender con los reinicios, sumamos los reinicios
+                    //Si hay apagados, pero se pueden encender con los reinicios, sumamos los apagados
                     System.out.println((numCambios + numApagados));
                 }
             }

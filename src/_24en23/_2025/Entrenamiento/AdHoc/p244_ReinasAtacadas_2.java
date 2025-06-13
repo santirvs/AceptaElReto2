@@ -1,4 +1,4 @@
-package _24en23._2025.Entrenamiento;
+package _24en23._2025.Entrenamiento.AdHoc;
 
 import java.util.*;
 

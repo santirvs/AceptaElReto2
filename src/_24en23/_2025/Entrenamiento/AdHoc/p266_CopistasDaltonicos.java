@@ -1,8 +1,7 @@
-package _24en23._2025.Entrenamiento;
+package _24en23._2025.Entrenamiento.AdHoc;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
