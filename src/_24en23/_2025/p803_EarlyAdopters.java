@@ -14,7 +14,7 @@ import java.util.Scanner;
 // v2.- En lugar de comprobar todos los árboles,
 //      los construye y comprueba que funcionen
 
-public class p832_EarlyAdopters {
+public class p803_EarlyAdopters {
 
     static List<Integer> respuesta;
 
