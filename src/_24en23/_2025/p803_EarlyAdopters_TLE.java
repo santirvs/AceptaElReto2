@@ -13,7 +13,7 @@ import java.util.Scanner;
 // v1.- Calcular recursivamente la lista de los números a insertar  -> TLE
 
 
-public class p832_EarlyAdopters_TLE {
+public class p803_EarlyAdopters_TLE {
 
     //Lista donde ir guardando el resultado
     static List<Integer> result;
