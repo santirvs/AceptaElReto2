@@ -1,8 +1,6 @@
 package _24en23._2025;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -30,172 +28,76 @@ import java.util.*;
     // Sigue dando MLE. ¿Es necesario guardar los coches del tren?
 
     // Ideas.... se pueden ir procesando los coches a medida que se leen?
+    // Salvo el MLE, pero tengo WA! No consigo generar un caso de prueba que lo provoque
 
+    // Recupero la versión de LIS a partir de las pistas:
+    // 1. En la solución óptima que estamos buscando, habrá un conjunto inicial (quizá vacío) de coches que no suban al tren.
+    // 2. Una vez que sube el primer tren de la solución óptima, los coches que suban por la cabecera seguirán una secuencia creciente y los que suban por el final una decreciente.
+    // 3. En la cola de espera, tras el primer coche de la solución óptima los coches que suben por la cabecera son los que forman la subsecuencia creciente más larga y los que suben por el final la decreciente más larga.
+    // 4. Existen algoritmos muy estudiados para calcular la subsecuencia creciente más larga: es el problema del longest increasing subsequence (LIS). El problema con la subsecuencia decreciente (LDS) se resuelve de igual forma.
+    // 5. En la solución óptima el primer coche en subir al tren es aquel cuya suma de las longitudes de la LIS y LDS que comienzan en él es máxima.
+    // 6. Los algoritmos habituales de LIS y LDS determinan las subsecuencias más largas que terminan en cada elemento del vector. Si queremos saber las longitudes más largas de las que empiezan en cada elemento, basta con hacer el cálculo sobre el vector dado la vuelta (y cambiar LIS por LDS y viceversa).
+    // 7. El número de coches esperando es muy grande; necesitarás un algoritmo de LIS/LDS eficiente, que no sea cuadrático.
 
 public class p810_ElMozoDeEstacion {
 
 
-    static class FastReader {
-
-        BufferedReader br;
-        StringTokenizer st;
-
-        public FastReader() {
-            br = new BufferedReader(
-                    new InputStreamReader(System.in));
-        }
-
-        String next() {
-            while (st == null || !st.hasMoreElements()) {
-                try {
-                    st = new StringTokenizer(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        // Busca la posición de inserción con binary search
+        private static int lowerBound(int[] dp, int length, int val) {
+            int low = 0, high = length;
+            while (low < high) {
+                int mid = (low + high) / 2;
+                if (dp[mid] < val) low = mid + 1;
+                else high = mid;
             }
-            return st.nextToken();
+            return low;
         }
 
-        int nextInt() {
-            return Integer.parseInt(next());
-        }
+        public static void main(String[] args) throws IOException {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.equals("0")) break;
+                if (line.isEmpty()) continue;
 
-        long nextLong() {
-            return Long.parseLong(next());
-        }
-
-        double nextDouble() {
-            return Double.parseDouble(next());
-        }
-
-        String nextLine() {
-            String str = "";
-            try {
-                if (st.hasMoreTokens()) {
-                    str = st.nextToken("\n");
-                } else {
-                    str = br.readLine();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return str;
-        }
-    }
-
-    // Método para resolver el problema
-    public static int resolver(int[] pesos) {
-        // Lista para almacenar los coches en el tren
-
-        int[] numerosClave = new int[4];
-        int cantidadCoches = 0;
-        for (int i = 0; i < 4; i++) {
-            numerosClave[i] = Integer.MAX_VALUE; // Inicializar con un valor grande
-        }
-
-        if (pesos.length <= 2) {
-            return pesos.length; // Si hay 0 o 1 coche, el tren tiene ese número de coches
-        }
-
-        for (int peso : pesos) {
-            // Si el tren está vacío, añadir el coche
-            if (numerosClave[0] == Integer.MAX_VALUE) {
-                numerosClave[0] = peso;
-                cantidadCoches++;
-            } else if (peso > ultimoValor(numerosClave)) {
-                // Si el coche es más pesado que el último, añadir al final
-                anyadirAlFinal(numerosClave, peso);
-                cantidadCoches++;
-            } else if (peso < numerosClave[0]) {
-                // Si el coche es más ligero que el primero, añadir al principio
-                anyadirAlPrincipio(numerosClave, peso);
-                cantidadCoches++;
-            } else {
-                // Buscar la posición correcta para insertar el coche
-                reemplazarCoche(numerosClave, peso);
-
-            }
-        }
-
-        return cantidadCoches;
-    }
-
-    private static void reemplazarCoche(int[] numerosClave, int peso) {
-        if (numerosClave[0] < peso && peso < numerosClave[1]) {
-            // Si solo hay un coche, se reemplaza el primero
-            numerosClave[0] = peso;
-        } else if (numerosClave[1] < peso && peso < numerosClave[2]) {
-            // Si el peso está en el intervalo entre el segundo y el penúltimo coche
-            // se reemplaza el penultimo
-            if (numerosClave[3] == Integer.MAX_VALUE) {
-                // Si el penúltimo coche no está informado, se añade el peso
-                numerosClave[3] = numerosClave[2];
-            }
-            numerosClave[2] = peso;
-        } else if (numerosClave[2] < peso && peso < numerosClave[3])  {
-            // Si el peso está entre el penúltimo y el último coche, se reemplaza el último
-            numerosClave[3] = peso;
-        }
-    }
-
-    private static void anyadirAlPrincipio(int[] numerosClave, int peso) {
-        int segundo = numerosClave[1];
-        numerosClave[1] = numerosClave[0];
-        numerosClave[0] = peso; // Añadir el nuevo peso al principio
-        if (numerosClave[3] == Integer.MAX_VALUE) {
-            // Si el último coche no está informado, se desplaza el penúltimo coche
-            numerosClave[3] = numerosClave[2];
-            numerosClave[2] = segundo; // Desplazar el segundo coche al penúltimo
-        }
-    }
-
-    private static void anyadirAlFinal(int[] numerosClave, int peso) {
-        int i=3;
-        while (numerosClave[i] == Integer.MAX_VALUE) {
-            i--;
-        }
-        if (i == 3) {
-            //Se añade el peso al final
-            numerosClave[i - 1] = numerosClave[i];
-            numerosClave[i] = peso;
-        }
-        else {
-            numerosClave[i+1] = peso; // Añadir el nuevo peso al final
-        }
-    }
-
-    private static int ultimoValor(int[] numerosClave) {
-        int resultado = Integer.MAX_VALUE;
-
-        for (int i = 3; i >= 0; i--) {
-            if (numerosClave[i] != Integer.MAX_VALUE) {
-                resultado = numerosClave[i]; // Devolver el último valor no máximo
-                break;
-            }
-        }
-        return resultado;
-    }
-
-
-    public static void main(String[] args) throws IOException {
-
-            //Lectura de los datos con BufferedReader en lugar de Scanner
-            FastReader scan = new FastReader();
-            while (true) {
-                //Leer hasta encontrar un 0
-                int numCoches = scan.nextInt();
-                if (numCoches == 0) break;
-
-                //Leer la cantidad de coches que van a llegar
-                //Lectura del peso de los n coches
-                int[] pesos = new int[numCoches];
-                for (int i = 0; i < numCoches; i++) {
-                    pesos[i] = scan.nextInt();
+                int n = Integer.parseInt(line);
+                int[] weights = new int[n];
+                String[] parts = br.readLine().trim().split(" ");
+                for (int i = 0; i < n; i++) {
+                    weights[i] = Integer.parseInt(parts[i]);
                 }
 
-                //Calcular la solución
-                int res = resolver(pesos);
-                System.out.println(res);
+                // Calcula LIS desde el final hacia el inicio
+                int[] dpLIS = new int[n];
+                int[] lisFrom = new int[n];
+                int lenLIS = 0;
+                for (int i = n - 1; i >= 0; i--) {
+                    int pos = lowerBound(dpLIS, lenLIS, weights[i]);
+                    dpLIS[pos] = weights[i];
+                    if (pos == lenLIS) lenLIS++;
+                    lisFrom[i] = pos;
+                }
+
+                // Calcula LDS desde el final hacia el inicio (equivale a LIS en -weights)
+                int[] dpLDS = new int[n];
+                int[] ldsFrom = new int[n];
+                int lenLDS = 0;
+                for (int i = n - 1; i >= 0; i--) {
+                    int val = -weights[i];
+                    int pos = lowerBound(dpLDS, lenLDS, val);
+                    dpLDS[pos] = val;
+                    if (pos == lenLDS) lenLDS++;
+                    ldsFrom[i] = pos;
+                }
+
+                int maxTrain = 0;
+                for (int i = 0; i < n; i++) {
+                    int total = 1 + lisFrom[i] + ldsFrom[i];
+                    if (total > maxTrain) maxTrain = total;
+                }
+
+                System.out.println(maxTrain);
             }
         }
     }
