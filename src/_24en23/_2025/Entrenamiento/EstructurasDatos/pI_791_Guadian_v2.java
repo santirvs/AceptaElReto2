@@ -1,3 +1,5 @@
+package _24en23._2025.Entrenamiento.EstructurasDatos;
+
 import java.io.*;
 import java.util.*;
 
