@@ -1,15 +1,16 @@
 import java.util.*;
 
 /**
-     *
-     * @author santi
-     *
-     * v1 - Recuperado un envío anterior de 01/01/2024 con WA
-     *
-     * v2 - Análisis. La lista de meses estaba mal definida:
-     *       4 años + 1 bisiesto + 4 años debe ser 1 bisiesto + 3 años + 1 bisiesto + 3 años + 1 bisiesto
-     *       Cambio Lista por HashSet para el conjunto de días posibles (no son necesarios los repetidos)
-     */
+ *
+ * @author santi
+ *
+ * v1 - Recuperado un envío anterior de 01/01/2024 con WA
+ *
+ * v2 - Análisis. La lista de meses estaba mal definida:
+ *       4 años + 1 bisiesto + 4 años debe ser 1 bisiesto + 3 años + 1 bisiesto + 3 años + 1 bisiesto
+ *       Cambio Lista por HashSet para el conjunto de días posibles (no son necesarios los repetidos)
+ *       AC !
+ */
 
     public class p719_1260Dias {
 
