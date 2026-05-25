@@ -80,18 +80,17 @@ public class p563_TecladoDeTelevisor {
         return mapa;
     }
 
-
     public static void Floyd (int[][]dist) {
         for (int k=0; k<dist.length; ++k) {
             for (int i=0; i<dist.length; ++i) {
                 for (int j=0; j<dist.length; ++j) {
-                    dist[i][j] = Math.min( dist[i][j], dist[i][k]+dist[j][k]);
+                    dist[i][j] = Math.min( dist[i][j], dist[i][k]+dist[k][j]);
                 }
             }
         }
     }
     
-    public int[][] analizarMando(char[][] matriz, HashMap<Character, Integer> indiceTeclas) {
+    public static int[][] analizarMando(char[][] matriz, HashMap<Character, Integer> indiceTeclas) {
         int[][] distancias = new int[indiceTeclas.size()][indiceTeclas.size()];
         //Inicializarlo a INFINITO (cualquier valor superior a la cantidad de teclas)
         int INF = 100000;
@@ -107,18 +106,51 @@ public class p563_TecladoDeTelevisor {
         //Calcular matriz de adyacencias
         for (int i=0; i<f; i++) {
             for (int j= 0; j<c; j++) {
+                char teclaActual = matriz[i][j];
+                int indiceTeclaActual = indiceTeclas.get(teclaActual);
+
                 //Si ya está visitada la tecla, pasamos a la siguiente
-                if ( visitadas[indiceTeclas.get(matriz[i][j])] ) continue;
+                if ( visitadas[indiceTeclaActual] ) continue;
 
                 //Marcar la tecla como visitada
-                visitadas[indiceTeclas.get(matriz[i][j])] = true;
+                visitadas[indiceTeclaActual] = true;
 
-                ....   minuto 16:57
+                //Tecla de arriba
+                char teclaNueva = matriz[(i-1+f)%f][j];
+                int indiceTeclaNueva = indiceTeclas.get(teclaNueva);
+                distancias[indiceTeclaActual][indiceTeclaNueva]=1;
 
+                //Tecla de la izquierda
+                teclaNueva = matriz[i][(j-1+c)%c];
+                indiceTeclaNueva = indiceTeclas.get(teclaNueva);
+                distancias[indiceTeclaActual][indiceTeclaNueva]=1;
 
+                //Tecla de la derecha
+                int posx = j+1;
+                teclaNueva = matriz[i][posx%c];
+                //Bucle mientras la tecla sea la misma
+                while (posx <= c && teclaActual == teclaNueva) {
+                    posx++;
+                    teclaNueva = matriz[i][posx%c];
+                }
+                indiceTeclaNueva = indiceTeclas.get(teclaNueva);
+                distancias[indiceTeclaActual][indiceTeclaNueva]=1;
+
+                //Tecla de abajo
+                int posy = i+1;
+                teclaNueva = matriz[posy%f][j];
+                //Bucle mientras la tecla sea la misma
+                while (posy <= f && teclaActual == teclaNueva) {
+                    posy++;
+                    teclaNueva = matriz[posy%f][j];
+                }
+                indiceTeclaNueva = indiceTeclas.get(teclaNueva);
+                distancias[indiceTeclaActual][indiceTeclaNueva]=1;
             }
         }
-        
+
+        //Establecer la diagonal a cero (la distancia de una tecla a ella misma)
+        for (int i=0; i < distancias.length ; i++) distancias[i][i] = 0;
         
         return distancias;
     }
@@ -132,15 +164,15 @@ public class p563_TecladoDeTelevisor {
         //Crea el mapa de teclas -> indice que es común para todos los casos
         HashMap<Character, Integer> indiceTeclas = crearMapaTeclas();
 
-        int numPalabras = fr.nextInt();
-        int numColumnas = fr.nextInt();
         int numFilas = fr.nextInt();
+        int numColumnas = fr.nextInt();
+        int numPalabras = fr.nextInt();
 
         while (numPalabras!=0 || numColumnas!=0 || numFilas !=0) {
 
             //Declaración y lectura de la matriz
             char[][] matriz = new char[numFilas][numColumnas];
-            for (int f=0; f<numColumnas;f++) {
+            for (int f=0; f<numFilas;f++) {
                 matriz[f] = fr.next().toCharArray();
             }
 
@@ -151,16 +183,23 @@ public class p563_TecladoDeTelevisor {
             Floyd(distancia);
 
             //resolver el caso
+            for (int i=0; i < numPalabras; i++) {
+                String palabra = fr.next();
+                int solucion = distancia[indiceTeclas.get(matriz[0][0])][indiceTeclas.get(palabra.charAt(0))];
+                for (int j=0 ; j < palabra.length()-1; j++) {
+                    solucion += distancia[indiceTeclas.get(palabra.charAt(j))][indiceTeclas.get(palabra.charAt(j+1))];
+                }
+                out.println(solucion);
+            }
 
-
+            //Fin del caso
+            out.println("---");
 
             //Siguiente caso
-            numPalabras = fr.nextInt();
-            numColumnas = fr.nextInt();
             numFilas = fr.nextInt();
+            numColumnas = fr.nextInt();
+            numPalabras = fr.nextInt();
         }
     }
-
-
 
 }
